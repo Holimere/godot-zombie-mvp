@@ -42,7 +42,13 @@ jobs:
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           bsdtar -xf templates.tpz -C ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
+      - name: Install Android build template
+        run: |
+          ./godot --headless --path . --install-android-build-template
+
       - name: Export APK (debug)
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
         run: |
           mkdir -p build/android
           ./godot --headless --verbose --export-debug "${EXPORT_PRESET}" build/android/ZombieMVP-debug.apk

@@ -23,15 +23,16 @@ var damage: int = 34
 
 func _ready() -> void:
     Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-    var root := get_tree().current_scene
+    var root: Node = get_tree().current_scene
     if root:
         hud = root.get_node_or_null("HUD")
     _update_hud()
 
 func _input(event: InputEvent) -> void:
     if event is InputEventMouseMotion:
-        rotate_y(-event.relative.x * mouse_sensitivity)
-        cam.rotate_x(-event.relative.y * mouse_sensitivity)
+        var mm := event as InputEventMouseMotion
+        rotate_y(-mm.relative.x * mouse_sensitivity)
+        cam.rotate_x(-mm.relative.y * mouse_sensitivity)
         cam.rotation_degrees.x = clamp(cam.rotation_degrees.x, -89.0, 89.0)
     if Input.is_action_just_pressed("pause"):
         Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
@@ -44,7 +45,7 @@ func _physics_process(delta: float) -> void:
         Input.get_action_strength("move_back") - Input.get_action_strength("move_forward")
     ).normalized()
     var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-    var current_speed := speed
+    var current_speed: float = speed
 
     if Input.is_action_pressed("sprint") and stamina > 0.0 and input_dir.length() > 0.0:
         current_speed = sprint_speed
@@ -76,23 +77,26 @@ func _try_fire() -> void:
     _can_fire = true
 
 func _shoot_ray() -> void:
-    var from := cam.global_transform.origin
-    var to := from + cam.global_transform.basis.z * -1.0 * 100.0
+    var from: Vector3 = cam.global_transform.origin
+    var to: Vector3 = from + cam.global_transform.basis.z * -1.0 * 100.0
     var space_state := get_world_3d().direct_space_state
     var query := PhysicsRayQueryParameters3D.create(from, to)
     query.exclude = [self]
-    var result := space_state.intersect_ray(query)
+    var result: Dictionary = space_state.intersect_ray(query)
     if result and result.has("collider"):
-        var col := result.collider
-        var is_zombie := col.is_in_group("Zombie") or (col.get_parent() and col.get_parent().is_in_group("Zombie"))
-        if is_zombie:
-            var zombie := col if col.is_in_group("Zombie") else col.get_parent()
-            if "apply_damage" in zombie:
-                zombie.apply_damage(damage)
+        var col: Object = result.get("collider")
+        var is_zombie: bool = false
+        if col is Node:
+            var n: Node = col
+            is_zombie = n.is_in_group("Zombie") or (n.get_parent() and n.get_parent().is_in_group("Zombie"))
+            if is_zombie:
+                var zombie: Node = n if n.is_in_group("Zombie") else n.get_parent()
+                if "apply_damage" in zombie:
+                    zombie.call("apply_damage", damage)
 
 func _reload() -> void:
-    var needed := mag_size - ammo_in_mag
-    var to_load := min(needed, reserve_ammo)
+    var needed: int = mag_size - ammo_in_mag
+    var to_load: int = min(needed, reserve_ammo)
     ammo_in_mag += to_load
     reserve_ammo -= to_load
     _update_hud()
