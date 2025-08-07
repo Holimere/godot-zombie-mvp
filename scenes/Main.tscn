@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=3 uid="uid://zombie_mvp_main"]
+
+[node name="Main" type="Node3D"]
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="Level"]
+mesh = SubResource("PlaneMesh_rd9s0")
+material_override = SubResource("StandardMaterial3D_m0")
+
+[node name="WallNorth" type="MeshInstance3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 0.2, 0, 1, -25)
+mesh = SubResource("BoxMesh_w1")
+material_override = SubResource("StandardMaterial3D_m1")
+
+[node name="WallSouth" type="MeshInstance3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 0.2, 0, 1, 25)
+mesh = SubResource("BoxMesh_w1")
+material_override = SubResource("StandardMaterial3D_m1")
+
+[node name="WallEast" type="MeshInstance3D" parent="Level"]
+transform = Transform3D(0.2, 0, 0, 0, 2, 0, 0, 0, 1, 25, 1, 0)
+mesh = SubResource("BoxMesh_w1")
+material_override = SubResource("StandardMaterial3D_m1")
+
+[node name="WallWest" type="MeshInstance3D" parent="Level"]
+transform = Transform3D(0.2, 0, 0, 0, 2, 0, 0, 0, 1, -25, 1, 0)
+mesh = SubResource("BoxMesh_w1")
+material_override = SubResource("StandardMaterial3D_m1")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.87, -0.34, 0.35, 0.1, 0.85, 0.51, -0.48, -0.4, 0.78, 0, 20, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_e1")
+
+[node name="Player" parent="." instance=ExtResource("res://scenes/Player.tscn")]
+[node name="ZombieSpawner" parent="." instance=ExtResource("res://scenes/ZombieSpawner.tscn")]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0"]
+albedo_color = Color(0.19, 0.2, 0.22, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1"]
+albedo_color = Color(0.12, 0.14, 0.16, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_rd9s0"]
+size = Vector2(50, 50)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w1"]
+size = Vector3(50, 2, 0.4)
+
+[sub_resource type="Environment" id="Environment_e1"]
+background_mode = 1
+ambient_light_source = 1
+ambient_light_color = Color(0.3, 0.3, 0.4, 1)
+tonemap_mode = 2
+ssao_enabled = true
+
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ZombieSpawner.tscn" id="2"]
+
+[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="3"]
+[node name="HUD" parent="." instance=ExtResource("res://scenes/HUD.tscn")]

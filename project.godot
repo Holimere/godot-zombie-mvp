@@ -1,0 +1,25 @@
+config_version=5
+
+[application]
+config/name="ZombieMVP"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.0")
+
+[display]
+window/size/width=1280
+window/size/height=720
+
+[input]
+move_forward={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 87 }, { "type": "key", "keycode": 16777232 } ] }
+move_back={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 83 }, { "type": "key", "keycode": 16777233 } ] }
+move_left={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 65 }, { "type": "key", "keycode": 16777231 } ] }
+move_right={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 68 }, { "type": "key", "keycode": 16777230 } ] }
+jump={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 32 } ] }
+sprint={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 16777237 } ] }
+fire={ "deadzone": 0.5, "events": [ { "type": "mouse_button", "button_index": 1 } ] }
+reload={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 82 } ] }
+pause={ "deadzone": 0.5, "events": [ { "type": "key", "keycode": 16777217 } ] }
+
+[rendering]
+renderer/rendering_method="forward_plus"
+environment/defaults/default_clear_color=Color(0.1, 0.1, 0.12, 1.0)

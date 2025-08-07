@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[node name="Zombie" type="CharacterBody3D" groups=["Zombie"]]
+script = ExtResource("res://scripts/zombie.gd")
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_z")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_z")
+material_override = SubResource("StandardMaterial3D_z")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_z"]
+radius = 0.4
+height = 1.4
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_z"]
+radius = 0.4
+height = 1.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_z"]
+albedo_color = Color(0.16, 0.8, 0.3, 1)
+
+[ext_resource type="Script" path="res://scripts/zombie.gd" id="1"]

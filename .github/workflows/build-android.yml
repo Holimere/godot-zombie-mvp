@@ -1,0 +1,33 @@
+name: Build Android (Godot 4)
+on:
+  push: { branches: [ main ] }
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.2.2"
+  EXPORT_PRESET: "Android"
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: android-actions/setup-android@v3
+      - name: Download Godot Headless
+        run: |
+          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip -O godot.zip
+          unzip -q godot.zip
+          mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
+      - name: Download Export Templates
+        run: |
+          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_export_templates.tpz -O templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          bsdtar -xf templates.tpz -C ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      - name: Export APK (debug)
+        run: |
+          mkdir -p build/android
+          ./godot --headless --export-debug "${EXPORT_PRESET}" build/android/ZombieMVP-debug.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: ZombieMVP-debug.apk, path: build/android/ZombieMVP-debug.apk }
