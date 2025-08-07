@@ -1,33 +1,48 @@
 name: Build & Deploy Web (Godot 4)
+
 on:
   push: { branches: [ main ] }
   workflow_dispatch:
+
 permissions:
   contents: write
   pages: write
   id-token: write
+
 env:
-  GODOT_VERSION: "4.2.2"
+  GODOT_VERSION: "4.3"
   EXPORT_PRESET: "Web"
+
 jobs:
   build-web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download Godot Headless
+
+      - name: Install deps (libarchive-tools for bsdtar)
+        run: sudo apt-get update && sudo apt-get install -y libarchive-tools
+
+      - name: Download Godot Headless (GitHub mirror + retry)
         run: |
-          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip -O godot.zip
+          set -e
+          url=https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          for i in {1..5}; do curl -L --fail --retry 5 --retry-delay 2 "$url" -o godot.zip && break || sleep 3; done
           unzip -q godot.zip
           mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
-      - name: Download Export Templates
+
+      - name: Download Export Templates (GitHub mirror + retry)
         run: |
-          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_export_templates.tpz -O templates.tpz
+          set -e
+          url=https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          for i in {1..5}; do curl -L --fail --retry 5 --retry-delay 2 "$url" -o templates.tpz && break || sleep 3; done
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           bsdtar -xf templates.tpz -C ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
       - name: Export HTML5
         run: |
           mkdir -p build/web
-          ./godot --headless --export-release "${EXPORT_PRESET}" build/web/index.html
+          ./godot --headless --verbose --export-release "${EXPORT_PRESET}" build/web/index.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
